@@ -85,6 +85,7 @@ def cmd_help():
 ├──────────────────┼──────────────────────────────────────┤
 │ start "task"     │ Avvia il timer per il task indicato  │
 │ stop             │ Ferma il timer e salva la sessione   │
+│ cancel           │ Annulla il timer senza salvare       │
 │ status           │ Mostra il timer in corso             │
 ├──────────────────┼──────────────────────────────────────┤
 │ list             │ Elenca tutte le sessioni con indice  │
@@ -137,6 +138,14 @@ def cmd_start(task_name=None):
     now = datetime.now().isoformat(timespec="seconds")
     save_state({"task": task_name, "start": now})
     print(f"▶  Timer avviato: '{task_name}'  [{datetime.now().strftime('%H:%M:%S')}]")
+
+def cmd_cancel():
+    state = load_state()
+    if not state:
+        print("⏸  Nessun timer attivo da annullare.")
+        return
+    clear_state()
+    print(f"🗑️  Timer annullato: '{state['task']}' (nessuna riga scritta nel log).")
 
 def cmd_stop():
     state = load_state()
@@ -270,6 +279,8 @@ def main():
             cmd_start(" ".join(args[1:]))
     elif cmd == "stop":
         cmd_stop()
+    elif cmd == "cancel":
+        cmd_cancel()
     elif cmd == "status":
         cmd_status()
     elif cmd == "list":
